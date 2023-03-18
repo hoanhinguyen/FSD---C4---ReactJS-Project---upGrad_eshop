@@ -1,0 +1,25 @@
+.selectAddWrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 2% 0 2% 0;
+}
+
+.selectAdd {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+
+}
+
+.addressForm {
+    width: 50%;
+}
+
+.or{
+    text-align: center;
+}
