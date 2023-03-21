@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import Navbar from "../Navbar/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -26,7 +26,7 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="https://www.upgrad.com/vn/">
         upGrad
       </Link>{" "}
       {2021}
@@ -38,7 +38,7 @@ function Copyright(props) {
 const Signup = () => {
   const [input, setInput] = useState({
     email: "",
-    role: ["user"],
+    role: ["admin"],
     password: "",
     firstName: "",
     lastName: "",
@@ -49,59 +49,89 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const { getAdmin, getUsersContext, users } = useContext(AuthContext);
+  const { getUsersContext, newAdminToken } = useContext(AuthContext);
 
   // get the users for login process
-  const gettingUserData = async () => {
+  const gettingUsersData = async (newAdminToken) => {
     try {
-      await getAdmin();
-      await getUsersContext();
+      await getUsersContext(newAdminToken);
     } catch (e) {
       console.log(e);
     }
   };
 
-  useEffect(() => {
-    gettingUserData();
-  }, []);
-
-  // This function is used to validate password and email input
-  const validating = (password, emailInput) => {
+  // This function is used to validate password input
+  const validating = (password) => {
     if (confirmPass.length < 6) {
       setError("Password length should be greater than 6");
       return true;
-    } else if (confirmPass != password) {
+    } else if (confirmPass !== password) {
       setError("Mismatched password! Try again");
-      return true;
-    } else if (
-      users?.filter((user) => user.email.includes(emailInput)).length != 0
-    ) {
-      setError("This email has been used");
       return true;
     } else {
       return false;
     }
   };
 
+  // save the sign up field value in the input
   const handleChange = (e) => {
-    setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (e.target.name === "contactNumber") {
+      setInput((prev) => ({ ...prev, [e.target.name]: e.target.value + "" }));
+    } else {
+      setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    }
   };
 
+  //submit the input via sign up api
   const handleSubmitSignUp = async (e) => {
     e.preventDefault();
 
-    const validation = validating(input.password, input.email);
+    let userList;
 
+    console.log(newAdminToken);
+    // in the  case of user login, use admin token to get user database
+    if (newAdminToken) {
+      try {
+        const res = await axios.get(`/users`, {
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${newAdminToken}`,
+          },
+        });
+
+        userList = res.data;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    // checking if the input is existing in the user database
+    let checkingEmail = [];
+    if (userList) {
+      checkingEmail = userList?.filter((user) => user.email === input.email);
+    }
+
+    const validation = validating(input.password, input.email);
+    console.log(checkingEmail);
+
+    if (checkingEmail.length !== 0) {
+      setError("This email has been used");
+      return;
+    }
+
+    // checking if the password is valid or not
     if (validation === false) {
       try {
-        // sign up the user
+        // sign up for the application
         await axios.post("/auth/signup", input);
-        gettingUserData();
+        //updating the user list with the new added user for login process
+        gettingUsersData(newAdminToken);
+        navigate("/login");
       } catch (err) {
         console.log(err);
+        // when the user first sign up and there is some error, this can help validate the email input without the checking in the database
+        setError("This email has been used");
       }
-      
-      navigate("/login");
     }
   };
 
@@ -188,9 +218,9 @@ const Signup = () => {
               margin="normal"
               required
               fullWidth
-              name="contact"
+              name="contactNumber"
               label="Contact Number"
-              type="contact"
+              type="number"
               id="contact"
               autoComplete="contact"
               onChange={handleChange}

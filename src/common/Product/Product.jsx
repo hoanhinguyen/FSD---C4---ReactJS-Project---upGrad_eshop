@@ -24,10 +24,19 @@ const Product = (props) => {
   const { id, name, price, description, imageUrl } = product;
   const navigate = useNavigate();
 
-  const { role, token } = useContext(AuthContext);
+  const {token, currentUser } = useContext(AuthContext);
 
+  let currentRole;
+
+  if (Object.keys(currentUser).length !== 0) {
+    currentRole = currentUser?.roles[0]?.name;
+  } else {
+    currentRole = "";
+  }
+
+  // handle delete button
   const handleDelete = () => {
-    //delete method below
+    //delete method importing from the ComfirmDialog component below
     confirmDialog("Are you sure you want to delete the product?", async () => {
       try {
         await axios.delete(`/products/${id}`, {
@@ -44,24 +53,26 @@ const Product = (props) => {
     });
   };
 
+  // if edit a product, navigate to the update product page with the pathname having product id
   const handleEdit = () => {
     navigate(`/update/${id}`, { state: { title: "Modify Product" } });
   };
 
   return (
-    <Card className="card" sx={{ width: 350, height:450 }}>
+    <Card className="card" sx={{ width: 350, height: 450 }} key={id}>
       <CardMedia
         sx={{ height: 200 }}
         image={imageUrl}
         title="green iguana"
         alt={name}
+        key={id}
       />
-      <CardContent>
+      <CardContent >
         <div className="cardContent">
-          <Typography gutterBottom variant="h5" component="div">
+          <Typography gutterBottom variant="h6" component="div">
             {name}
           </Typography>
-          <Typography gutterBottom variant="h5" component="div">
+          <Typography gutterBottom variant="h6" component="div">
             ${price}
           </Typography>
         </div>
@@ -76,7 +87,7 @@ const Product = (props) => {
           </Button>
         </Link>
 
-        {role === "ADMIN" && (
+        {currentRole === "ADMIN" && (
           <Typography className="adminOps">
             <IconButton aria-label="delete" onClick={handleDelete}>
               <DeleteIcon fontSize="small" />

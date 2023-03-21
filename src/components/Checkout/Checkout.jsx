@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 
-import { AddAddress, Confirm } from "../../common";
+import { AddAddress, ConfirmPaper } from "../../common";
 import "./Checkout.css";
 
 import { ToastContainer, toast } from "react-toastify";
@@ -24,16 +24,16 @@ import { AuthContext } from "../../context/authContext";
 
 const customId = "custom-id-yes";
 
-const colorRed = red[500];
+
 const steps = ["Items", "Select Address", "Confirm Order"];
 
-const OrderInfo = ({ product, qtyC, calTotal }) => {
-  const totalPrice = Math.round(product.price * qtyC * 100) / 100 ;
+const OrderInfo = ({ product, qtyC, calTotal, transformedTextCategory }) => {
+  const totalPrice = Math.round(product.price * qtyC * 100) / 100;
   calTotal(totalPrice);
 
   return (
-    <Box sx={{flexGrow: 1,  mx: 20 }}  >
-      <Grid sx={{ flexGrow: 1}} container  className="details">
+    <Box sx={{ flexGrow: 1, mx: 20 }}>
+      <Grid sx={{ flexGrow: 1 }} container className="details">
         <Grid item xs={6} className="media">
           <img src={product.imageUrl} alt={product.name} />
         </Grid>
@@ -47,7 +47,7 @@ const OrderInfo = ({ product, qtyC, calTotal }) => {
 
           <div className="descDetails">
             <Typography variant="subtitle1" gutterBottom>
-              Categories: <b>{product.category}</b>{" "}
+              Categories: <b>{transformedTextCategory}</b>{" "}
             </Typography>
             <Typography variant="body1">{product.description}</Typography>
             <Typography variant="h4" color="secondary">
@@ -66,12 +66,13 @@ const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { product, num } = location.state;
+  const { product, num, transformedTextCategory } = location.state;
   const [selectItem, setSelectItem] = useState({});
-  const {token, currentUser} = useContext(AuthContext);
-
+  const { token, currentUser } = useContext(AuthContext);
 
   const handleNext = () => {
+
+    // if there is no address selected at step 1, alert the user
     if (Object.keys(selectItem).length === 0 && activeStep === 1) {
       Alert();
     } else {
@@ -86,12 +87,10 @@ const Checkout = () => {
   const submitOrder = async (e) => {
     //fetch user, address from db, for product, get it from product in the location.state
     const input = {
-      //get user below
       id: currentUser.id,
       user: currentUser.id,
       product: product.id,
       address: selectItem.id,
-      // price: totalPrice,
       quantity: num,
     };
     e.preventDefault();
@@ -99,8 +98,8 @@ const Checkout = () => {
     try {
       await axios.post("/orders", input, {
         headers: {
-          Authorization: 'Bearer ' + token
-        }
+          Authorization: "Bearer " + token,
+        },
       });
       navigate("/", { state: { message: "Order placed successfully!" } });
     } catch (err) {
@@ -109,7 +108,7 @@ const Checkout = () => {
   };
 
   const Alert = () => {
-    toast.error("Please select address", { toastId: customId });
+    toast.error("Please select address!", { toastId: customId });
   };
 
   return (
@@ -137,6 +136,7 @@ const Checkout = () => {
                 product={product}
                 calTotal={setTotalPrice}
                 qtyC={num}
+                transformedTextCategory={transformedTextCategory}
               />
             )}
             {activeStep === 1 && (
@@ -147,11 +147,12 @@ const Checkout = () => {
               />
             )}
             {activeStep === 2 && (
-              <Confirm
+              <ConfirmPaper
                 product={product}
                 selectItem={selectItem}
                 totalPrice={totalPrice}
                 qtyC={num}
+                transformedTextCategory={transformedTextCategory}
               />
             )}
 

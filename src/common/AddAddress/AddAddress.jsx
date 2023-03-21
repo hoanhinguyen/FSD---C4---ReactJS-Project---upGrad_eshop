@@ -17,7 +17,7 @@ const SelectAdd = ({ saveAddress, setSelectItemFunc }) => {
   function handleChange(e) {
     setSelectItemFunc(e.value);
   }
-
+  //producing address line in the select section
   const addOptions = saveAddress?.map((item) => ({
     value: item,
     label: `${item.street}, ${item.city}, ${item.state}, ${item.landmark}, ${item.zipcode}`,
@@ -50,16 +50,16 @@ const AddAddress = ({ selectItem, setSelectItemFunc, Alert }) => {
 
   return (
     <>
+      {/* Select component for selecting an address before submitting an order*/}
       <SelectAdd
-        saveAddress={saveAddress}
-        selectItem={selectItem}
-        setSelectItemFunc={setSelectItemFunc}
-        Notice={Alert}
+        saveAddress={saveAddress} //passing the saved addressed to the select section
+        selectItem={selectItem} //passing the selected item for the display of select section of the chosen address
+        setSelectItemFunc={setSelectItemFunc} //passing the function from parent to this child for getting the selected address
+        Notice={Alert} //this will ensure the address selection is not empty before going to the confirm page
       />
       <AddressForm
-        saveAddressFunc={setSaveAddress}
-        selectItem={selectItem}
-        saveAddress={saveAddress}
+        saveAddressFunc={setSaveAddress} //passing the function to its child for getting the address data
+        saveAddress={saveAddress} //
       />
     </>
   );

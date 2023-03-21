@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import { createContext, useEffect, useState } from "react";
 
 import { ToastContainer, toast } from "react-toastify";
@@ -16,21 +17,12 @@ export const AuthContextProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("access-token")) || ""
   );
 
-  const [userId, setUserId] = useState(
-    JSON.parse(localStorage.getItem("userId")) || ""
-  );
-
-  const [adminToken, setAdminToken] = useState("");
-
-  const [signedIn, setSignedIn] = useState(false);
-
   const [products, setProducts] = useState([]);
 
   const [users, setUsers] = useState(
     // JSON.parse(localStorage.getItem("users")) ||
     []
   );
-
 
   const [username, setUsername] = useState(
     JSON.parse(localStorage.getItem("username")) || ""
@@ -40,86 +32,92 @@ export const AuthContextProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("role")) || "USER"
   );
 
-  const login = async (inputs) => {
-    try {
-      const res = await axios.post("/auth/signin", inputs); ///login
+  const [categoryList, setCategoryList] = useState([]);
 
-      setToken(res.data.token);
-      setSignedIn((prev) => !prev);
-      localStorage.setItem("access-token", JSON.stringify(res.data.token));
-    } catch (e) {
-      console.log(e)
-    }
+  const [newAdminToken, setNewAdminToken] = useState(JSON.parse(localStorage.getItem("signin")) || "");
 
-  };
-
-  // getting users from admin account for login
-  const getAdmin = async () => {
+  //getting users data with admin token
+  const getUsersContext = async (tokenInput) => {
     const adminInputs = {
       username: "john.doe@xyz.com",
       password: "pass123",
     };
-    try {
-      const res = await axios.post("/auth/signin", adminInputs); ///login
+    let adminToken;
+    if (!newAdminToken) {
+      try {
+        const res = await axios.post("/auth/signin", adminInputs); ///login
 
-      setAdminToken(res.data.token);
-    } catch (e) {
-      // console.log(e);
+        adminToken = res.data.token;
+      } catch (e) {
+        console.log(e);
+      }
     }
+
+      try {
+        const res = await axios.get(`/users`, {
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${newAdminToken || tokenInput || adminToken}`,
+          },
+        });
+
+        setUsers(res.data);
+      } catch (e) {
+        console.log(e);
+      }
   };
 
-  //getting users data with admin token
-  const getUsersContext = async () => {
-    try {
-      const res = await axios.get(`/users`, {
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${adminToken}`,
-        },
-      });
-
-      setUsers(res.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
+  // getting the current user from the use list after using admin token
   const getCurrentUser = () => {
     const currentUserData = users?.filter((item) =>
       item?.email?.includes(username)
     )[0];
 
-    const currentRole = currentUserData?.roles[0]?.name;
-    const currentUserId = currentUserData?.id;
-
-    // console.log(currentUserId)
-
     if (currentUserData) {
       setCurrentUser(currentUserData);
+      setRole(currentUserData?.roles[0]?.name);
     } else {
       setCurrentUser({});
     }
+  };
 
-    if (currentRole) {
-      setRole(currentRole);
-    } else {
-      setRole("");
+  // checking if the user signed in is an admin, then save the admin token in the local storage
+  const checkingAdmin = async (token) => {
+    try {
+      const res = await axios.get(`/users`, {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUsers(res.data);
+      setNewAdminToken(token);
+    } catch (e) {
+      console.log(e);
     }
+  };
 
-    if (currentUserId) {
-      setUserId(currentUserId);
-    } else {
-      setUserId("");
+  const login = async (inputs) => {
+    try {
+      const res = await axios.post("/auth/signin", inputs); ///login
+      setToken(res.data.token);
+      localStorage.setItem("access-token", JSON.stringify(res.data.token));
+      // checking if it is an admin user 
+      await checkingAdmin(res.data.token);
+
+    } catch (e) {
+      console.log(e);
     }
   };
 
   useEffect(() => {
-    const gettingUsersData = async () => {
+
+    const gettingUsersData = async (newAdminToken) => {
       try {
-        await getAdmin();
-        await getUsersContext();
-      } catch (err) {
-        console.log(err);
+        await getUsersContext(newAdminToken);
+      } catch (e) {
+        console.log(e);
       }
     };
 
@@ -128,7 +126,11 @@ export const AuthContextProvider = ({ children }) => {
     if (users !== []) {
       getCurrentUser();
     }
-  }, [signedIn]);
+  }, [newAdminToken]);
+
+  useEffect(() => {
+    localStorage.setItem("signin", JSON.stringify(newAdminToken));
+  }, [newAdminToken]);
 
   useEffect(() => {
     localStorage.setItem("access-token", JSON.stringify(token));
@@ -143,26 +145,19 @@ export const AuthContextProvider = ({ children }) => {
     localStorage.setItem("role", JSON.stringify(role));
   }, [role]);
 
-  useEffect(() => {
-    localStorage.setItem("userId", JSON.stringify(userId));
-  }, [userId]);
-
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("access-token");
-    localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("role");
-    localStorage.removeItem("userId");
 
-    setCurrentUser(null);
+    setCurrentUser({});
     setToken("");
     setUsername("");
     setRole("");
-    setUserId("")
   };
 
-  // API calls to the products 
+  // API calls to the products
   const fetchProducts = async () => {
     try {
       const res = await axios.get("/products");
@@ -174,6 +169,15 @@ export const AuthContextProvider = ({ children }) => {
 
   const Alert = (text, id) => {
     toast.success(text, { toastId: id });
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get("/products/categories");
+      setCategoryList(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -189,17 +193,13 @@ export const AuthContextProvider = ({ children }) => {
         currentUser,
         token,
         setUsername,
-        setUsers,
-        role,
-        username,
-        users,
         getCurrentUser,
         getUsersContext,
-        setRole,
-        getAdmin,
-        setSignedIn,
-        signedIn,
-        userId
+        checkingAdmin,
+        fetchCategories,
+        setCategoryList,
+        categoryList,
+        newAdminToken
       }}
     >
       {children}

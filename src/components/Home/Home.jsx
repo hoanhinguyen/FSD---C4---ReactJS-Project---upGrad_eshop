@@ -19,18 +19,12 @@ const Home = () => {
   const location = useLocation();
   let message = "";
 
-  const [categories, setCategories] = useState([]);
   const {
     setProducts,
     fetchProducts,
     Alert,
     ToastContainer,
     products,
-    getAdmin,
-    getUsersContext,
-    users,
-    getCurrentUser,
-    signedIn
   } = useContext(AuthContext);
 
   const [deleteProduct, setDeleteProduct] = useState(false);
@@ -40,37 +34,17 @@ const Home = () => {
     message = location.state.message;
   }
 
-  useEffect(() => {
-    const gettingUsersData = async () => {
-      try {
-        await getAdmin();
-        await getUsersContext();
-      } catch (er) {
-        console.log(er);
-      }
-    };
-
-    // this line is used to get the users to get the current user for the logined
-    gettingUsersData();
-
-    if (users) {
-      getCurrentUser();
+  const fectchingProducts = async () => {
+    try {
+      await fetchProducts();
+      return true;
+    } catch (e) {
+      console.log(e);
     }
-  },[]);
+  };
 
-  // when this homepge is on and we have a token => the user logined => getting user databases
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await axios.get("/products/categories");
-        setCategories(res.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
 
-    fetchCategories();
-    console.log(categories);
     if (location.state !== null) {
       Alert(message, "success1");
     }
@@ -79,16 +53,15 @@ const Home = () => {
     };
   }, []);
 
+  // after deleting a product, the page should be updated with the modified product list
   useEffect(() => {
-    const fectchingProducts = async () => {
-      await fetchProducts();
-    };
-
     fectchingProducts();
   }, [deleteProduct]);
 
+  // this is used for sorting products in the select section
   const handleChange = async (val) => {
     setSelect(val);
+
     if (val === "asc") {
       setProducts((products) =>
         products.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
@@ -98,14 +71,19 @@ const Home = () => {
         products.sort((a, b) => parseFloat(b.price) - parseFloat(a.price))
       );
     } else if (val === "new") {
-      setProducts((products) => products.reverse());
-    } else {
+      // getting the product list from the database and then manipulate the returned array
       try {
-        await fetchProducts();
+        const res = await axios.get("/products");
+        // as the newest product is placed at the end of the returned array, reverse the array to make newest sorting 
+        const newest = res.data.reverse();
+        setProducts(newest);
       } catch (err) {
         console.log(err);
       }
+    } else if (val === "default") {
+      fectchingProducts();
     }
+
   };
 
   return (
@@ -117,9 +95,10 @@ const Home = () => {
       <Categories
         setCurrentCategoryFunc={setCurrentCategory}
         currentCategory={currentCategory}
+        deleteProduct={deleteProduct}
       />
-
-      <Sorting selectItem={select} handleChangeFunc={handleChange} />
+      {/* passing the handlechange function for getting the passing value  */}
+      <Sorting handleChangeFunc={handleChange} />
 
       <main className="products">
         <Grid

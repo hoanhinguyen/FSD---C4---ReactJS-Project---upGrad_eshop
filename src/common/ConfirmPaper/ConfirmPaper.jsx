@@ -1,13 +1,11 @@
-import React, {useContext} from "react";
+import React from "react";
 import { Box, Grid, Typography, Divider } from "@mui/material";
-import "./Confirm.css";
+import "./ConfirmPaper.css";
 import { red } from "@mui/material/colors";
 
 const colorRed = red[500];
 
-const Confirm = ({ product, totalPrice, selectItem, qtyC }) => {
-
-
+const Confirm = ({ product, totalPrice, selectItem, qtyC, transformedTextCategory }) => {
   return (
     <>
       <Box
@@ -28,7 +26,6 @@ const Confirm = ({ product, totalPrice, selectItem, qtyC }) => {
       >
         <Grid item className="confirmOrder">
           <Typography>
-
             <Typography variant="h3" mb={1}>
               {product.name}
             </Typography>
@@ -38,10 +35,10 @@ const Confirm = ({ product, totalPrice, selectItem, qtyC }) => {
 
             <div className="descDetails">
               <Typography variant="subtitle1" gutterBottom>
-                Categories: <b>{product.category}</b>{" "}
+                Categories: <b>{transformedTextCategory}</b>{" "}
               </Typography>
               <Typography variant="body1">{product.description}</Typography>
-              <Typography variant="h4" color='secondary'>
+              <Typography variant="h4" color="secondary">
                 Total Price: ${totalPrice}
               </Typography>
             </div>
@@ -49,7 +46,6 @@ const Confirm = ({ product, totalPrice, selectItem, qtyC }) => {
         </Grid>
         <Divider orientation="vertical" flexItem />
         <Grid className="address">
-
           <Typography variant="h3" mb={1}>
             Address Details
           </Typography>
@@ -70,7 +66,6 @@ const Confirm = ({ product, totalPrice, selectItem, qtyC }) => {
           </Typography>
         </Grid>
       </Box>
-
     </>
   );
 };

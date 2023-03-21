@@ -21,7 +21,7 @@ const theme = createTheme({
       main: "#3f51b5",
     },
     secondary: {
-      main: '#ff1744',
+      main: "#ff1744",
     },
   },
 });
@@ -46,7 +46,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/:id",
-        element: <ProductDetail/>,
+        element: <ProductDetail />,
       },
       {
         path: "/update",
@@ -58,7 +58,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/update/:id",
-        element: <UpdateProduct/>,
+        element: <UpdateProduct />,
       },
     ],
   },

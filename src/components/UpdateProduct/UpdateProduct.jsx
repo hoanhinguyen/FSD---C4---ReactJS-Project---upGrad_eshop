@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 
-import { useNavigate,  useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { AuthContext } from "../../context/authContext";
@@ -29,17 +29,6 @@ const theme = createTheme({
   },
 });
 
-const catOptions = [
-  {
-    value: "electronics",
-    label: "Electronics",
-    name: "category",
-    isFixed: true,
-  },
-  { value: "apparel", label: "Apparel", name: "category" },
-  { value: "personalcare", label: "Personal Care", name: "category" },
-];
-
 const selectStyles = {
   menu: (base) => ({
     ...base,
@@ -60,15 +49,32 @@ const UpdateProduct = () => {
 
   const location = useLocation();
 
+  const [messageUpdate, setMessageUpdate] = useState("");
+
+  // getting product id in path name
   const productId = location.pathname.slice(8);
 
   const [header, setHeader] = useLocalStorage("title", "Add Product");
 
   const navigate = useNavigate();
 
-  const { Alert, ToastContainer, token } = useContext(AuthContext);
+  const { Alert, ToastContainer, token, fetchCategories, categoryList } =
+    useContext(AuthContext);
 
+  let categoryOptions = [];
+
+  //
   useEffect(() => {
+    const fetchingCategories = async () => {
+      try {
+        await fetchCategories();
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchingCategories();
+
     const getProduct = async () => {
       try {
         const res = await axios.get(`/products/${productId}`);
@@ -81,25 +87,58 @@ const UpdateProduct = () => {
     // if there is a product id, the page should be used to modify the product
     if (productId) {
       setHeader("Modify Product");
-      // this can help fill in the product info in the text field
+      // this can help fill in the product info in the text field if the product id exists
       getProduct();
     } else {
       setHeader("Add Product");
     }
   }, []);
 
+  //creating options for selecting dropdown menu
+  categoryList?.map((item) =>
+    categoryOptions.push({
+      value: item,
+      label: item,
+      name: "category",
+    })
+  );
+
   const handleChange = (e) => {
-    if (e.name === "category") {
-      console.log(e.name);
+    // if the received event from the selecting option is new value, use this input
+    if (e.__isNew__) {
+      setInput((prev) => ({ ...prev, [categoryOptions[0].name]: e.value }));
+    } else if (e.name) {
       setInput((prev) => ({ ...prev, [e.name]: e.value }));
-    } else {
+    }
+    // if the received event from the normal fields, use this section
+    if (e.target) {
       setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     }
   };
 
+  // if the current input is not saved in the selecting options, add it to the option list with this condition
+  if (
+    categoryOptions.filter(
+      (item) => item.value === input.category.toLowerCase()
+    ).length === 0
+  ) {
+    categoryOptions.push({
+      value: input.category,
+      label: input.category,
+      name: "category",
+    });
+  }
+
+  // this is used to submit the new product to the database with the put request in the product API
   const handleSubmit = async (e) => {
-    console.log(input);
     e.preventDefault();
+
+    // checking if there are any empty values in the input before calling api
+    if (Object.values(input).filter((val) => val === "").length !== 0) {
+      setMessageUpdate("All fields must not be empty");
+      return false;
+    }
+    // as dealing with modifying product, we use api with product id to update the respective product
     if (productId) {
       try {
         await axios.put(`/products/${productId}`, input, {
@@ -111,11 +150,12 @@ const UpdateProduct = () => {
       } catch (err) {
         console.log(err);
       }
-
+      //if the modification is successful, we navigate to the home page
       navigate("/", {
         state: { message: `Product ${input.name} modified successfully` },
       });
     } else {
+      // if  there is no product id, we use post request in the api call to add a new product
       try {
         await axios.post(`/products`, input, {
           headers: {
@@ -166,20 +206,22 @@ const UpdateProduct = () => {
               <CreatableSelect
                 name="category"
                 value={
+                  // if there is a product id, we use the category value from the existing product
                   productId
-                    ? catOptions.filter((opt) =>
+                    ? categoryOptions.filter((opt) =>
                         opt.value.includes(input.category)
                       )
+                    // we check if there is any category input to set the value of this selecting section 
                     : input.category
-                    ? catOptions.filter((opt) =>
+                    ? categoryOptions.filter((opt) =>
                         opt.value.includes(input.category)
                       )
                     : ""
                 }
-                options={catOptions}
+                options={categoryOptions}
                 clearable={false}
-                styles={selectStyles}
                 onChange={handleChange}
+                styles={selectStyles}
                 color="primary"
               />
               <TextField
@@ -242,6 +284,11 @@ const UpdateProduct = () => {
                 autoComplete="description"
                 onChange={handleChange}
               />
+              {messageUpdate && (
+                <Typography variant="body1" color="secondary">
+                  {messageUpdate}
+                </Typography>
+              )}
               <Button
                 className="button"
                 type="submit"

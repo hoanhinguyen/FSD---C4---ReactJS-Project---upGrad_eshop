@@ -1,5 +1,3 @@
-// ConfirmDialog.jsx
-// material ui
 import {
   Dialog,
   DialogTitle,

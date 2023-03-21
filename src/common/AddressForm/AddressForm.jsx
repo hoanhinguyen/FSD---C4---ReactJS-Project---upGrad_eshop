@@ -26,13 +26,13 @@ const theme = createTheme({
   },
 });
 
-const AddressForm = ({ saveAddressFunc, saveAddress }) => {
-  const { token, userId, signedIn } = useContext(AuthContext);
+const AddressForm = ({ saveAddressFunc}) => {
+  const { token, currentUser } = useContext(AuthContext);
 
   const [message, setMessage] = useState("");
 
   const [input, setInput] = useState({
-    id: userId,
+    id: currentUser.id,
     name: "",
     contactNumber: "",
     city: "",
@@ -40,7 +40,7 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
     street: "",
     state: "",
     zipcode: "",
-    user: userId,
+    user: currentUser.id,
   });
 
   const fetchAddress = async () => {
@@ -50,8 +50,10 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
           Authorization: "Bearer " + token,
         },
       });
-      console.log(res)
-      const addressesByUserId = res.data.filter((item) => item.user === userId);
+
+      const addressesByUserId = res.data.filter(
+        (item) => item.user === currentUser.id
+      );
 
       saveAddressFunc(addressesByUserId);
     } catch (err) {
@@ -67,17 +69,21 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
         },
       });
 
-      console.log(res)
+      if (Object.values(input).filter((val) => val === "").length !== 0) {
+        setMessage("All fields must not be empty");
+        return false;
+      }
 
       if (input.contactNumber !== "") {
-        if (
-          res.data.filter((add) => add.contactNumber === input.contactNumber)
-        ) {
+        if (res.data.find((add) => add.contactNumber === input.contactNumber)) {
           setMessage("This is a duplicated contact number! Try a new one");
+          return false;
         }
         setTimeout(() => {
           setMessage("");
         }, 3000);
+
+        return true;
       }
     } catch (err) {
       console.log(err);
@@ -86,18 +92,15 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
 
   useEffect(() => {
     fetchAddress();
-  }, [signedIn]);
-
+  }, []);
 
   // THIS WILL POST AN ADDRESS IN THE DATABASE, THEN SAVE THEM IN THE ADDRESS
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    fetchAndTestAddress();
+    const validatingInput = fetchAndTestAddress();
 
-    const found = saveAddress?.some((el) => el.street === input.street);
-    // if the address to be submitted is not duplicated, save it
-    if (!found) {
+    if (validatingInput) {
       try {
         //save address in the database
         await axios.post("/addresses", input, {
@@ -108,7 +111,7 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
 
         setTimeout(() => {
           setMessage("");
-        }, 3000);
+        }, 10000);
 
         setMessage("Your Address has been saved");
       } catch (err) {
@@ -121,7 +124,11 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
   };
 
   const handleChange = (e) => {
-    setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (e.target.value === "contactNumber" || e.target.value === "zipcode") {
+      setInput((prev) => ({ ...prev, [e.target.name]: e.target.value + "" }));
+    } else {
+      setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    }
   };
 
   return (
@@ -143,6 +150,7 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
 
             <Box component="form" noValidate sx={{ my: 0.5 }}>
               <TextField
+                value={input.name}
                 margin="normal"
                 required
                 fullWidth
@@ -154,17 +162,19 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
                 onChange={handleChange}
               />
               <TextField
+                value={input.contactNumber}
                 margin="normal"
                 required
                 fullWidth
                 name="contactNumber"
                 label="Contact Number"
-                type="contact"
+                type="number"
                 // id="contactNumber"
                 autoComplete="lastname"
                 onChange={handleChange}
               />
               <TextField
+                value={input.email}
                 margin="normal"
                 required
                 fullWidth
@@ -176,6 +186,7 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
                 onChange={handleChange}
               />
               <TextField
+                value={input.street}
                 margin="normal"
                 required
                 fullWidth
@@ -187,6 +198,7 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
                 onChange={handleChange}
               />
               <TextField
+                value={input.city}
                 margin="normal"
                 required
                 fullWidth
@@ -198,6 +210,7 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
                 onChange={handleChange}
               />
               <TextField
+                value={input.state}
                 margin="normal"
                 required
                 fullWidth
@@ -220,12 +233,13 @@ const AddressForm = ({ saveAddressFunc, saveAddress }) => {
                 onChange={handleChange}
               />
               <TextField
+                value={input.zipcode}
                 margin="normal"
                 required
                 fullWidth
                 name="zipcode"
                 label="Zip Code"
-                type="zipcode"
+                type="number"
                 // id="zip"
                 autoComplete="zipcode"
                 onChange={handleChange}

@@ -28,7 +28,7 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="https://www.upgrad.com">
         upGrad
       </Link>{" "}
       {"."}
@@ -36,11 +36,13 @@ function Copyright(props) {
   );
 }
 
+// alert when there is any issue on the login page
 const LoginAlert = (text) => {
   toast.error(text, { toastId: "login-alert" });
 };
 
 const Login = () => {
+
   const [input, setInput] = useState({
     username: "",
     password: "",
@@ -48,30 +50,32 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const {
-    login,
-    setUsername,
-    setSignedIn,
-    getAdmin,
-    getUsersContext,
-    getCurrentUser,
-    token,
-  } = useContext(AuthContext);
+  const { login, setUsername, getUsersContext, getCurrentUser, token,checkingAdmin, newAdminToken} =
+    useContext(AuthContext); 
 
-  const gettingUsersData = async () => {
-    try {
-      await getAdmin();
-      await getUsersContext();
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
+  // whenever the token changed from empty to having some value, get the users data and current user data for login and authorization
   useEffect(() => {
-    if (token) {
-      gettingUsersData();
-      getCurrentUser();
 
+    const gettingUsersData = async () => {
+      try {
+        await getUsersContext();
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    const checkingAdminSignedIn = async (token)=> {
+      try {
+        await checkingAdmin(token);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    if (token) {
+      // checking if the user is an admin, then use admin token for getting user list
+      checkingAdminSignedIn(token);
+      gettingUsersData(newAdminToken);
+      getCurrentUser();
       navigate("/", { state: { message: "Successfully Login" } });
     }
   }, [token]);
@@ -80,11 +84,10 @@ const Login = () => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // this is used to check if the login request is successfully resolved
   const loginProcess = async () => {
     try {
       await login(input);
-      setSignedIn(prev => !prev);
-      // navigate("/", { state: { message: "Successfully Login" } });
       return true;
     } catch (e) {
       console.log(e);
@@ -92,14 +95,17 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     // set and save username for checking the current user for login
     setUsername(input.username);
     localStorage.setItem("username", JSON.stringify(input.username));
-    gettingUsersData();
+    
+    // store the result of the login process
+    const checkingLogin = loginProcess();
 
-    if (token === "" && loginProcess() !== true) {
+    // if there is any error, something wrong and alert the user
+    if (token === "" && checkingLogin !== true) {
       LoginAlert("Wrong username or password");
     }
   };
@@ -120,7 +126,7 @@ const Login = () => {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon backgroundColor="red" />
+            <LockOutlinedIcon backgroundColor="secondary" />
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign in

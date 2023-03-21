@@ -1,121 +1,40 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  Typography,
-  Button,
-  InputBase,
-  createTheme
-} from "@mui/material";
-import { styled, alpha } from "@mui/material/styles";
+import { AppBar, Box, Toolbar, Typography, Button } from "@mui/material";
 
-import { ShoppingCart, Token } from "@mui/icons-material";
-import SearchIcon from "@mui/icons-material/Search";
+import { ShoppingCart } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
+
+import { SearchProduct } from "../../common/index.js";
 
 import { AuthContext } from "../../context/authContext.js";
 
 import "./Navbar.css";
 
-
 const Navbar = () => {
-  //these 2 data will be fetched from AuthContext via Login or signup
-  const { token, logout, setProducts, fetchProducts, role, getCurrentUser, getAdmin, getUsersContext, users } =
-    useContext(AuthContext);
- 
-  const [input, setInput] = useState("");
+  //these 2 data will be fetched from AuthContext
+  const { logout, currentUser } = useContext(AuthContext);
 
-  useEffect(() => {
+  let currentRole;
 
-    const gettingUsersData = async () => {
-      try {
-        await getAdmin();
-        await getUsersContext();
-      } catch (er) {
-        console.log(er);
-      }
-    };
-
-    // this line is used to get the users to get the current user for the logined
-    gettingUsersData();
-
-    if (token.length!==0) {
-      getCurrentUser();
-    }
-  });
+  // getting the role of the current user for authorization
+  if (Object.keys(currentUser).length !== 0) {
+    currentRole = currentUser?.roles[0]?.name;
+  } else {
+    currentRole = "";
+  }
 
   const navigate = useNavigate();
 
-  const Search = styled("div")(({ theme }) => ({
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "auto",
-    },
-  }));
-
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "inherit",
-    "& .MuiInputBase-input": {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      [theme.breakpoints.up("md")]: {
-        width: "20ch",
-      },
-    },
-  }));
-
-  const SearchIconWrapper = styled("div")(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }));
-
+  // logging out and navigate to the homepage
   const handleLogOut = () => {
     logout();
     navigate("/");
   };
 
-  useEffect(() => {
-    setProducts((products) =>
-      products.filter((product) =>
-        product.name.toLowerCase().includes(input.toLowerCase())
-      )
-    );
-
-    const fetchingProducts = async () => {
-      fetchProducts(`/products`);
-    };
-
-    if (input === "") {
-      fetchingProducts();
-    }
-  }, [input]);
-
-  const handleChange = async (e) => {
-    setInput(e.target.value);
-  };
-
   return (
     <Box>
-      <AppBar position="static" color='primary' >
+      <AppBar position="static" color="primary">
         <Toolbar className="navContent">
           <div className="logo">
             <ShoppingCart
@@ -130,29 +49,15 @@ const Navbar = () => {
             </Typography>
           </div>
 
-          {/* if an admin, user this */}
-          {token ? (
+          {/* after authentication and authorization, use this section */}
+          {currentRole ? (
             <>
-              <Search
-                sx={{ flexGrow: 0.1 }}
-                className="search"
-                onChange={handleChange}
-                value={input}
-              >
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  value={input}
-                  placeholder="Search…"
-                  inputProps={{ "aria-label": "search" }}
-                />
-              </Search>
+              <SearchProduct className="search" />
               <div className="buttons">
                 <Link className="linkNav" to="/" color="inherit">
                   Home
                 </Link>
-                {(role ==="ADMIN") && (
+                {currentRole === "ADMIN" && (
                   <Link className="linkNav" to="/update" color="inherit">
                     Add Product
                   </Link>
@@ -160,7 +65,7 @@ const Navbar = () => {
                 <Button
                   onClick={handleLogOut}
                   variant="contained"
-                  color='secondary'
+                  color="secondary"
                 >
                   LOGOUT
                 </Button>
@@ -168,14 +73,14 @@ const Navbar = () => {
             </>
           ) : (
             <>
-            <div>
-              <Link className="linkNav" to="/login" color="inherit">
-                Login
-              </Link>
-              <Link className="linkNav" to="/signup" color="inherit">
-                Sign Up
-              </Link>
-            </div>
+              <div>
+                <Link className="linkNav" to="/login" color="inherit">
+                  Login
+                </Link>
+                <Link className="linkNav" to="/signup" color="inherit">
+                  Sign Up
+                </Link>
+              </div>
             </>
           )}
         </Toolbar>

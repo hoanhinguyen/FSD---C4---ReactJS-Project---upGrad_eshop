@@ -4,15 +4,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Categories from "../../common/Categories/Categories";
 import { Grid, Box, Typography, Chip, TextField, Button } from "@mui/material";
 
-import { red } from "@mui/material/colors";
-
 import { AuthContext } from "../../context/authContext";
 
 import { ToastContainer, toast } from "react-toastify";
 
 import "./ProductDetail.css";
 import axios from "axios";
-const colorRed = red[500];
 
 const LoginAlert = (text) => {
   toast.error(text, { toastId: "login-alert" });
@@ -26,15 +23,17 @@ const ProductDetail = () => {
   const productId = location.pathname.slice(1);
   const navigate = useNavigate();
 
+  const [categoryText, setCategoryText] = useState("");
+
   const { token } = useContext(AuthContext);
 
   useEffect(() => {
-    // get the product per id for product detail page
     const fetchProduct = async () => {
       try {
         const res = await axios.get(`/products/${productId}`);
 
         setProduct(res.data);
+        setCategoryText(res.data.category);
       } catch (e) {
         console.log(e.response);
       }
@@ -42,18 +41,31 @@ const ProductDetail = () => {
     fetchProduct();
   }, []);
 
+
+  const transformedCategory = (val) => {
+
+    if (val === "personalcare") {
+      return "Personal Care";
+    } else {
+      return val.charAt(0).toUpperCase() + val.slice(1);
+    }
+  };
+
+  const transformedTextCategory = transformedCategory(categoryText);
+
   const navigateToCheckout = () => {
-    // passing the product info to the checkout page
+    // passing the product info and order value to the checkout page
     navigate(`/checkout/${productId}`, {
-      state: { product, num },
+      state: { product, num, transformedTextCategory },
     });
   };
 
+  // checking if the user is logined to proceed the orders
   const handlePlaceOrder = () => {
     if (token) {
       navigateToCheckout();
     } else {
-      LoginAlert("Please Login to Place Orders");
+      LoginAlert("Please login to place orders");
     }
   };
 
@@ -63,11 +75,6 @@ const ProductDetail = () => {
     }
   };
 
-  const transformedCategory = (val) => {
-    if (val === "electronics") return "Electronics";
-    if (val === "personalcare") return "Personal Care";
-    if (val === "apparel") return "Apparel";
-  };
 
   return (
     <div className="productDetails">
@@ -83,13 +90,11 @@ const ProductDetail = () => {
           direction="row"
           spacing={4}
           alignItems="flex-start"
-          // sm={12}
-          // md={12}
         >
           <Grid item xs={4} className="media">
             <img src={product.imageUrl} alt={product.name} />
           </Grid>
-          <Grid item sx={{ pl: 6 }}  xs={8} className="description" >
+          <Grid item sx={{ pl: 6 }} xs={8} className="description">
             <div className="title">
               <Typography variant="h3">{product.name}</Typography>
               <Chip
@@ -99,7 +104,7 @@ const ProductDetail = () => {
             </div>
             <div className="descDetails">
               <Typography variant="subtitle1" gutterBottom>
-                Categories: <b>{transformedCategory(product.category)}</b>{" "}
+                Categories: <b>{transformedTextCategory}</b>{" "}
               </Typography>
               <Typography variant="body1">{product.description}</Typography>
               <Typography variant="h4" color="secondary">
