@@ -38,20 +38,20 @@ export const AuthContextProvider = ({ children }) => {
 
   //getting users data with admin token
   const getUsersContext = async (tokenInput) => {
-    const adminInputs = {
-      username: "john.doe@xyz.com",
-      password: "pass123",
-    };
+    // const adminInputs = {
+    //   username: "john.doe@xyz.com",
+    //   password: "pass123",
+    // };
     let adminToken;
-    if (!newAdminToken) {
-      try {
-        const res = await axios.post("/auth/signin", adminInputs); ///login
+    // if (!newAdminToken) {
+    //   try {
+    //     const res = await axios.post("/auth/signin", adminInputs); ///login
 
-        adminToken = res.data.token;
-      } catch (e) {
-        console.log(e);
-      }
-    }
+    //     adminToken = res.data.token;
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // }
 
       try {
         const res = await axios.get(`/users`, {
@@ -193,6 +193,7 @@ export const AuthContextProvider = ({ children }) => {
         currentUser,
         token,
         setUsername,
+        username,
         getCurrentUser,
         getUsersContext,
         checkingAdmin,

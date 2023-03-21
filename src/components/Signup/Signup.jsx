@@ -88,7 +88,7 @@ const Signup = () => {
 
     let userList;
 
-    console.log(newAdminToken);
+
     // in the  case of user login, use admin token to get user database
     if (newAdminToken) {
       try {
