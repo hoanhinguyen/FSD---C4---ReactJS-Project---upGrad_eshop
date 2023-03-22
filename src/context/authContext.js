@@ -155,6 +155,7 @@ export const AuthContextProvider = ({ children }) => {
     setToken("");
     setUsername("");
     setRole("");
+    
   };
 
   // API calls to the products

@@ -8,7 +8,7 @@ import { AuthContext } from "../../context/authContext";
 
 import { ToastContainer, toast } from "react-toastify";
 
-import "./ProductDetail.css";
+import "./ProductDetails.css";
 import axios from "axios";
 
 const LoginAlert = (text) => {

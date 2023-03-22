@@ -29,7 +29,7 @@ const Navbar = () => {
   // logging out and navigate to the homepage
   const handleLogOut = () => {
     logout();
-    navigate("/");
+    navigate("/login");
   };
 
   return (

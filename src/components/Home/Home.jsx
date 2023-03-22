@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../context/authContext.js";
 
@@ -13,6 +13,7 @@ import {
 
 import "./Home.css";
 
+
 const Home = () => {
   const [select, setSelect] = useState("");
   const [currentCategory, setCurrentCategory] = useState("");
@@ -25,9 +26,11 @@ const Home = () => {
     Alert,
     ToastContainer,
     products,
+    token
   } = useContext(AuthContext);
 
   const [deleteProduct, setDeleteProduct] = useState(false);
+  const navigate = useNavigate();
 
   // this is used to invoke alert for successful modification from other pages
   if (location.state !== null) {
@@ -44,6 +47,10 @@ const Home = () => {
   };
 
   useEffect(() => {
+     
+    if(token.length === 0) {
+      navigate('/login')
+    }
 
     if (location.state !== null) {
       Alert(message, "success1");

@@ -9,7 +9,7 @@ import {
   Signup,
   Navbar,
   Home,
-  ProductDetail,
+  ProductDetails,
   Checkout,
   UpdateProduct,
 } from "./components";
@@ -46,7 +46,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/:id",
-        element: <ProductDetail />,
+        element: <ProductDetails />,
       },
       {
         path: "/update",
