@@ -95,14 +95,14 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // set and save username for checking the current user for login
     setUsername(input.username);
     localStorage.setItem("username", JSON.stringify(input.username));
     
     // store the result of the login process
-    const checkingLogin = loginProcess();
+    const checkingLogin = await loginProcess();
 
     // if there is any error, something wrong and alert the user
     if (token === "" && checkingLogin !== true) {

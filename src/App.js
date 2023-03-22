@@ -23,6 +23,9 @@ const theme = createTheme({
     secondary: {
       main: "#ff1744",
     },
+    muted: {
+      main:"#9e9e9e"
+    }
   },
 });
 

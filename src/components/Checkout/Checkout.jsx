@@ -11,7 +11,7 @@ import {
   StepLabel,
   Button,
 } from "@mui/material";
-import { red } from "@mui/material/colors";
+
 
 import { AddAddress, ConfirmPaper } from "../../common";
 import "./Checkout.css";
@@ -38,7 +38,7 @@ const OrderInfo = ({ product, qtyC, calTotal, transformedTextCategory }) => {
           <img src={product.imageUrl} alt={product.name} />
         </Grid>
         <Grid item xs={6} className="description">
-          <Typography variant="h3" mb={1}>
+          <Typography variant="h4" mb={1}>
             {product.name}
           </Typography>
           <Typography variant="body1" mb={1}>
@@ -49,8 +49,8 @@ const OrderInfo = ({ product, qtyC, calTotal, transformedTextCategory }) => {
             <Typography variant="subtitle1" gutterBottom>
               Categories: <b>{transformedTextCategory}</b>{" "}
             </Typography>
-            <Typography variant="body1">{product.description}</Typography>
-            <Typography variant="h4" color="secondary">
+            <Typography variant="body1" sx={{fontStyle: 'italic'}}>{product.description}</Typography>
+            <Typography variant="h5" color="secondary">
               Total Price: ${totalPrice}
             </Typography>
           </div>
@@ -82,6 +82,9 @@ const Checkout = () => {
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    if (activeStep-1===1) {
+      setSelectItem("")
+    }
   };
 
   const submitOrder = async (e) => {

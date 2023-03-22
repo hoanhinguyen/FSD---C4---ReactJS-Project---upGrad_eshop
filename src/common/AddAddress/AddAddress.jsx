@@ -20,7 +20,7 @@ const SelectAdd = ({ saveAddress, setSelectItemFunc }) => {
   //producing address line in the select section
   const addOptions = saveAddress?.map((item) => ({
     value: item,
-    label: `${item.street}, ${item.city}, ${item.state}, ${item.landmark}, ${item.zipcode}`,
+    label: `${item.name} --> ${item.street}, ${item.city}, ${item.state}, ${item.landmark}`,
   }));
 
   return (

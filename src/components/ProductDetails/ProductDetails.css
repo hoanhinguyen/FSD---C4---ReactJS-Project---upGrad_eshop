@@ -41,7 +41,8 @@ img{
     display: flex;
     flex-direction: column;
     gap: 20px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 30px;
 }
 
 .actions {
@@ -49,8 +50,4 @@ img{
     flex-direction: column;
     width: 50%;
     gap: 15px;
-}
-
-.button{
-    width: 50%;
 }

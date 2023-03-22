@@ -60,7 +60,7 @@ const ProductDetail = () => {
     });
   };
 
-  // checking if the user is logined to proceed the orders
+  // checking if the user logged in to proceed the orders
   const handlePlaceOrder = () => {
     if (token) {
       navigateToCheckout();
@@ -69,6 +69,7 @@ const ProductDetail = () => {
     }
   };
 
+  // handling the quantity input
   const handleChange = (e) => {
     if (e.target.value > 0) {
       setNum(e.target.value);
@@ -96,7 +97,7 @@ const ProductDetail = () => {
           </Grid>
           <Grid item sx={{ pl: 6 }} xs={8} className="description">
             <div className="title">
-              <Typography variant="h3">{product.name}</Typography>
+              <Typography variant="h4">{product.name}</Typography>
               <Chip
                 label={`Available Quantity: ${product.availableItems}`}
                 color="primary"
@@ -129,6 +130,7 @@ const ProductDetail = () => {
                 className="button"
                 variant="contained"
                 color="primary"
+                sx={{ width: 150, padding: 1 }}
               >
                 PLACE ORDER
               </Button>

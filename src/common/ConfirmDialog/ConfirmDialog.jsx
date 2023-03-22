@@ -26,20 +26,21 @@ const ConfirmDialog = () => {
     <div className="confirmDialog">
       <Dialog
         open={Boolean(onSubmit)}
-        PaperProps={{ sx: { width: "25%" } }}
+        PaperProps={{ sx: { width: "28%"} }}
         onClose={close}
         maxWidth="sm"
         fullWidth
         className="dialog"
+        aria-describedby="alert-dialog-description"
       >
-        <DialogTitle>Confirm deletion of product</DialogTitle>
+        <DialogTitle>Confirm deletion of product!</DialogTitle>
         <Box position="absolute" top={0} right={0} >
           <IconButton onClick={close}>
             <Close />
           </IconButton>
         </Box>
-        <DialogContent>
-          <Typography>{message}</Typography>
+        <DialogContent sx={{ pt: 0 }}>
+          <Typography sx={{color:'#757575'}}>{message}</Typography>
         </DialogContent>
         <DialogActions>
           <Button
