@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, FormControl, Typography } from "@mui/material";
 
-import "./Sorting.css";
+import "./SortBy.css";
 
 import CreatableSelect from "react-select/creatable";
 
@@ -19,19 +19,20 @@ const selectStyles = {
   }),
 };
 
-const Sorting = ({ handleChangeFunc }) => {
+const SortBy = ({ handleChangeFunc }) => {
   return (
-    <div className="sorting">
+    <div className="sortby">
       <Typography display="inline" variant="body1" align="left">
         Sort by:
       </Typography>
       <Box sx={{ minWidth: 120 }}>
-        <FormControl className="sortingForm">
+        <FormControl className="sortbyForm">
           <CreatableSelect
             color="primary"
             options={sortOptions}
             clearable={false}
             styles={selectStyles}
+            // injecting the selected value to the function from the parent
             onChange={(e) => handleChangeFunc(e.value)}
           />
         </FormControl>
@@ -40,4 +41,4 @@ const Sorting = ({ handleChangeFunc }) => {
   );
 };
 
-export default Sorting;
+export default SortBy;

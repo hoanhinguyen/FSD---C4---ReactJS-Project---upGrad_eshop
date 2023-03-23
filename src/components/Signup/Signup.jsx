@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Navbar from "../Navbar/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -49,9 +49,9 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const { getUsersContext, newAdminToken } = useContext(AuthContext);
+  const { getUsersContext, newAdminToken, token } = useContext(AuthContext);
 
-  // get the users for login process
+  // getting the users for login process
   const gettingUsersData = async (newAdminToken) => {
     try {
       await getUsersContext(newAdminToken);
@@ -60,6 +60,11 @@ const Signup = () => {
     }
   };
 
+  useEffect(()=> {
+    if (token) {
+      navigate('/')
+    }
+  },[])
   // This function is used to validate password input
   const validating = (password) => {
     if (confirmPass.length < 6) {
@@ -89,7 +94,7 @@ const Signup = () => {
     let userList;
 
 
-    // in the  case of user login, use admin token to get user database
+    // in the case of user login, use admin token to get user database
     if (newAdminToken) {
       try {
         const res = await axios.get(`/users`, {
@@ -105,21 +110,20 @@ const Signup = () => {
       }
     }
 
-    // checking if the input is existing in the user database
+    // checking if the email input is existing in the user list
     let checkingEmail = [];
     if (userList) {
       checkingEmail = userList?.filter((user) => user.email === input.email);
     }
 
-    const validation = validating(input.password, input.email);
-    console.log(checkingEmail);
+    const validation = validating(input.password);
 
     if (checkingEmail.length !== 0) {
       setError("This email has been used");
       return;
     }
 
-    // checking if the password is valid or not
+    // checking if the password is valid or not before the API call
     if (validation === false) {
       try {
         // sign up for the application
@@ -245,7 +249,7 @@ const Signup = () => {
               <Grid item xs></Grid>
               <Grid item>
                 <Link to="/login" variant="body2">
-                  {"Already have an account? Log In"}
+                  Already have an account? Log In
                 </Link>
               </Grid>
             </Grid>

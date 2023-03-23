@@ -12,7 +12,7 @@ import { AuthContext } from "../../context/authContext.js";
 import "./Navbar.css";
 
 const Navbar = () => {
-  //these 2 data will be fetched from AuthContext
+
   const { logout, currentUser } = useContext(AuthContext);
 
   let currentRole;
@@ -26,7 +26,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
-  // logging out and navigate to the homepage
+  // logging out and navigate to the login page
   const handleLogOut = () => {
     logout();
     navigate("/login");

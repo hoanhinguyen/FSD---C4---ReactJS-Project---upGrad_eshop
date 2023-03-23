@@ -1,4 +1,4 @@
-// import './App.css';
+
 import React from "react";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 
@@ -14,6 +14,8 @@ import {
   UpdateProduct,
 } from "./components";
 import { AuthContextProvider } from "./context/authContext";
+
+import './App.css'
 
 const theme = createTheme({
   palette: {
@@ -77,7 +79,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="app">
+    <div className="App">
       <div className="container">
         <AuthContextProvider>
           <ThemeProvider theme={theme}>

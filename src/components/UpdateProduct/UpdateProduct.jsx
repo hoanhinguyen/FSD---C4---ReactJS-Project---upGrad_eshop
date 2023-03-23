@@ -65,6 +65,9 @@ const UpdateProduct = () => {
 
   //
   useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
     const fetchingCategories = async () => {
       try {
         await fetchCategories();
@@ -189,7 +192,12 @@ const UpdateProduct = () => {
               {header}
             </Typography>
 
-            <Box component="form" noValidate sx={{ mt: 1 }}>
+            <Box
+              component="form"
+              noValidate
+              sx={{ mt: 1 }}
+              className="productUpdate_form"
+            >
               <TextField
                 value={input.name}
                 margin="normal"
@@ -204,6 +212,7 @@ const UpdateProduct = () => {
               />
 
               <CreatableSelect
+                className="selectCat"
                 name="category"
                 value={
                   // if there is a product id, we use the category value from the existing product
@@ -211,8 +220,8 @@ const UpdateProduct = () => {
                     ? categoryOptions.filter((opt) =>
                         opt.value.includes(input.category)
                       )
-                    // we check if there is any category input to set the value of this selecting section 
-                    : input.category
+                    : // we check if there is any category input to set the value of this selecting section
+                    input.category
                     ? categoryOptions.filter((opt) =>
                         opt.value.includes(input.category)
                       )

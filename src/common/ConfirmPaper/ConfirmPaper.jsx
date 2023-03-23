@@ -1,9 +1,6 @@
 import React from "react";
 import { Box, Grid, Typography, Divider } from "@mui/material";
 import "./ConfirmPaper.css";
-import { red } from "@mui/material/colors";
-
-const colorRed = red[500];
 
 const Confirm = ({ product, totalPrice, selectItem, qtyC, transformedTextCategory }) => {
   return (
@@ -26,7 +23,7 @@ const Confirm = ({ product, totalPrice, selectItem, qtyC, transformedTextCategor
       >
         <Grid item className="confirmOrder">
           <Typography>
-            <Typography variant="h3" mb={1}>
+            <Typography variant="h4" mb={1}>
               {product.name}
             </Typography>
             <Typography variant="body1" mb={1}>
@@ -38,7 +35,7 @@ const Confirm = ({ product, totalPrice, selectItem, qtyC, transformedTextCategor
                 Categories: <b>{transformedTextCategory}</b>{" "}
               </Typography>
               <Typography variant="body1">{product.description}</Typography>
-              <Typography variant="h4" color="secondary">
+              <Typography variant="h5" color="secondary">
                 Total Price: ${totalPrice}
               </Typography>
             </div>
@@ -46,7 +43,7 @@ const Confirm = ({ product, totalPrice, selectItem, qtyC, transformedTextCategor
         </Grid>
         <Divider orientation="vertical" flexItem />
         <Grid className="address">
-          <Typography variant="h3" mb={1}>
+          <Typography variant="h4" mb={1}>
             Address Details
           </Typography>
           <Typography variant="body1" mb={1}>

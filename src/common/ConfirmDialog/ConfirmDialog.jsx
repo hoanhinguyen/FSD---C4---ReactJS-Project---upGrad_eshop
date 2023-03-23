@@ -46,6 +46,7 @@ const ConfirmDialog = () => {
           <Button
             color="primary"
             variant="contained"
+            // if ok button is clicked, call the onSubmit function that call an API for deleting a product
             onClick={() => {
               if (onSubmit) {
                 onSubmit();

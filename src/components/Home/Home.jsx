@@ -6,13 +6,12 @@ import { AuthContext } from "../../context/authContext.js";
 import { Grid } from "@mui/material";
 import {
   Product,
-  Sorting,
+  SortBy,
   Categories,
   ConfirmDialog,
 } from "../../common/index.js";
 
 import "./Home.css";
-
 
 const Home = () => {
   const [select, setSelect] = useState("");
@@ -20,14 +19,8 @@ const Home = () => {
   const location = useLocation();
   let message = "";
 
-  const {
-    setProducts,
-    fetchProducts,
-    Alert,
-    ToastContainer,
-    products,
-    token
-  } = useContext(AuthContext);
+  const { setProducts, fetchProducts, Alert, ToastContainer, products, token } =
+    useContext(AuthContext);
 
   const [deleteProduct, setDeleteProduct] = useState(false);
   const navigate = useNavigate();
@@ -47,11 +40,11 @@ const Home = () => {
   };
 
   useEffect(() => {
-     
-    if(token.length === 0) {
-      navigate('/login')
+    // of the user not logged in, navigate to the login page
+    if (token.length === 0) {
+      navigate("/login");
     }
-
+    // if there is a message from location, call Alert
     if (location.state !== null) {
       Alert(message, "success1");
     }
@@ -68,20 +61,22 @@ const Home = () => {
   // this is used for sorting products in the select section
   const handleChange = async (val) => {
     setSelect(val);
-
+    // sorting product in the ascending order
     if (val === "asc") {
       setProducts((products) =>
         products.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
       );
+      // order products in the descending order
     } else if (val === "desc") {
       setProducts((products) =>
         products.sort((a, b) => parseFloat(b.price) - parseFloat(a.price))
       );
+      // for order the product from the newest
     } else if (val === "new") {
       // getting the product list from the database and then manipulate the returned array
       try {
         const res = await axios.get("/products");
-        // as the newest product is placed at the end of the returned array, reverse the array to make newest sorting 
+        // as the newest product is placed at the end of the returned array, reverse the array to make newest sorting
         const newest = res.data.reverse();
         setProducts(newest);
       } catch (err) {
@@ -90,7 +85,6 @@ const Home = () => {
     } else if (val === "default") {
       fectchingProducts();
     }
-
   };
 
   return (
@@ -105,7 +99,7 @@ const Home = () => {
         deleteProduct={deleteProduct}
       />
       {/* passing the handlechange function for getting the passing value  */}
-      <Sorting handleChangeFunc={handleChange} />
+      <SortBy handleChangeFunc={handleChange} />
 
       <main className="products">
         <Grid

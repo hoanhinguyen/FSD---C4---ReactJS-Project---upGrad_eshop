@@ -19,10 +19,7 @@ export const AuthContextProvider = ({ children }) => {
 
   const [products, setProducts] = useState([]);
 
-  const [users, setUsers] = useState(
-    // JSON.parse(localStorage.getItem("users")) ||
-    []
-  );
+  const [users, setUsers] = useState([]);
 
   const [username, setUsername] = useState(
     JSON.parse(localStorage.getItem("username")) || ""
@@ -34,40 +31,29 @@ export const AuthContextProvider = ({ children }) => {
 
   const [categoryList, setCategoryList] = useState([]);
 
-  const [newAdminToken, setNewAdminToken] = useState(JSON.parse(localStorage.getItem("signin")) || "");
+  const [newAdminToken, setNewAdminToken] = useState(
+    JSON.parse(localStorage.getItem("signin")) || ""
+  );
 
-  //getting users data with admin token
+  //getting user list with admin token input
   const getUsersContext = async (tokenInput) => {
-    // const adminInputs = {
-    //   username: "john.doe@xyz.com",
-    //   password: "pass123",
-    // };
     let adminToken;
-    // if (!newAdminToken) {
-    //   try {
-    //     const res = await axios.post("/auth/signin", adminInputs); ///login
 
-    //     adminToken = res.data.token;
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    // }
+    try {
+      const res = await axios.get(`/users`, {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${newAdminToken || tokenInput || adminToken}`,
+        },
+      });
 
-      try {
-        const res = await axios.get(`/users`, {
-          headers: {
-            accept: "application/json",
-            Authorization: `Bearer ${newAdminToken || tokenInput || adminToken}`,
-          },
-        });
-
-        setUsers(res.data);
-      } catch (e) {
-        console.log(e);
-      }
+      setUsers(res.data);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  // getting the current user from the use list after using admin token
+  // getting the current user from the use list
   const getCurrentUser = () => {
     const currentUserData = users?.filter((item) =>
       item?.email?.includes(username)
@@ -81,7 +67,7 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  // checking if the user signed in is an admin, then save the admin token in the local storage
+  // checking if the user signed in is an admin, then save the admin token
   const checkingAdmin = async (token) => {
     try {
       const res = await axios.get(`/users`, {
@@ -90,7 +76,7 @@ export const AuthContextProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-
+      // setting user list and admin token with the result from API call on '/users'
       setUsers(res.data);
       setNewAdminToken(token);
     } catch (e) {
@@ -103,16 +89,15 @@ export const AuthContextProvider = ({ children }) => {
       const res = await axios.post("/auth/signin", inputs); ///login
       setToken(res.data.token);
       localStorage.setItem("access-token", JSON.stringify(res.data.token));
-      // checking if it is an admin user 
+      // checking if it is an admin user
       await checkingAdmin(res.data.token);
-
     } catch (e) {
       console.log(e);
     }
   };
 
+  // getting user list whenever the admin token is changed
   useEffect(() => {
-
     const gettingUsersData = async (newAdminToken) => {
       try {
         await getUsersContext(newAdminToken);
@@ -145,20 +130,7 @@ export const AuthContextProvider = ({ children }) => {
     localStorage.setItem("role", JSON.stringify(role));
   }, [role]);
 
-  const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("access-token");
-    localStorage.removeItem("username");
-    localStorage.removeItem("role");
-
-    setCurrentUser({});
-    setToken("");
-    setUsername("");
-    setRole("");
-    
-  };
-
-  // API calls to the products
+  // API call on the "/products"
   const fetchProducts = async () => {
     try {
       const res = await axios.get("/products");
@@ -172,6 +144,7 @@ export const AuthContextProvider = ({ children }) => {
     toast.success(text, { toastId: id });
   };
 
+  // API  call on the "/categories"
   const fetchCategories = async () => {
     try {
       const res = await axios.get("/products/categories");
@@ -179,6 +152,18 @@ export const AuthContextProvider = ({ children }) => {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("access-token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
+
+    setCurrentUser({});
+    setToken("");
+    setUsername("");
+    setRole("");
   };
 
   return (
@@ -194,14 +179,12 @@ export const AuthContextProvider = ({ children }) => {
         currentUser,
         token,
         setUsername,
-        username,
         getCurrentUser,
         getUsersContext,
         checkingAdmin,
         fetchCategories,
-        setCategoryList,
         categoryList,
-        newAdminToken
+        newAdminToken,
       }}
     >
       {children}

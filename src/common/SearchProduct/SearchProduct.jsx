@@ -12,19 +12,21 @@ const SearchProduct = () => {
   const [input, setInput] = useState("");
 
   const fetchingProducts = async () => {
-    await fetchProducts(`/products`);
+    await fetchProducts();
   };
 
   useEffect(() => {
+    // if there is no input in the search bar, the page should display all products
     if (input === "") {
       fetchingProducts();
     }
   }, [input]);
 
-  // handle input from user in the search bar
-  const handleChange = (e) => {
+  // handle input from a user in the search bar
+  const handleChange = async(e) => {
     setInput(e.target.value);
-    // filter product in accordance to use inputs
+    // filter product in accordance to user inputs
+    await fetchProducts()
     setProducts((products) =>
       products.filter((product) =>
         product.name.toLowerCase().includes(input.toLowerCase())

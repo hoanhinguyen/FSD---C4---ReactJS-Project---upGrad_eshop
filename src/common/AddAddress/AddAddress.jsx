@@ -10,6 +10,7 @@ const selectStyles = {
   menu: (base) => ({
     ...base,
     zIndex: 100,
+    textAlign: "left",
   }),
 };
 
@@ -45,21 +46,20 @@ const SelectAdd = ({ saveAddress, setSelectItemFunc }) => {
   );
 };
 
-const AddAddress = ({ selectItem, setSelectItemFunc, Alert }) => {
+const AddAddress = ({ selectItem, setSelectItemFunc }) => {
   const [saveAddress, setSaveAddress] = useState([]);
 
   return (
     <>
-      {/* Select component for selecting an address before submitting an order*/}
+      {/* a component for selecting an address before submitting an order*/}
       <SelectAdd
         saveAddress={saveAddress} //passing the saved addressed to the select section
         selectItem={selectItem} //passing the selected item for the display of select section of the chosen address
         setSelectItemFunc={setSelectItemFunc} //passing the function from parent to this child for getting the selected address
-        Notice={Alert} //this will ensure the address selection is not empty before going to the confirm page
       />
       <AddressForm
         saveAddressFunc={setSaveAddress} //passing the function to its child for getting the address data
-        saveAddress={saveAddress} //
+        saveAddress={saveAddress}
       />
     </>
   );

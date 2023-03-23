@@ -15,7 +15,7 @@ export default function Categories({ deleteProduct }) {
     useContext(AuthContext);
 
   useEffect(() => {
-    // getting the categories trhoug API call when this component is updated
+    // getting the categories throug API call when this component is render
     const fetchingCategories = async () => {
       try {
         await fetchCategories();
@@ -27,6 +27,7 @@ export default function Categories({ deleteProduct }) {
     fetchingCategories();
   }, []);
 
+  // when a product is deleted, updating the category list
   useEffect(() => {
     const fetchingCategories = async () => {
       try {
@@ -39,19 +40,17 @@ export default function Categories({ deleteProduct }) {
     fetchingCategories();
   }, [deleteProduct]);
 
-// this is used to sort the products per category
+  // this is used to sort the products per category
   const handleChange = async (event, newAlignment) => {
     setAlignment(newAlignment);
 
     // excepting all categories, sort the product per the selected category option
     if (newAlignment !== "all") {
-      
       await fetchProducts();
 
       setProducts((products) =>
         products.filter((item) => item.category.includes(newAlignment))
       );
-
     } else {
       try {
         await fetchProducts();
@@ -73,7 +72,7 @@ export default function Categories({ deleteProduct }) {
       <ToggleButton value="all" onClick={() => navigate(`/`)}>
         ALL
       </ToggleButton>
-      {/* use category data from the categories API to render these buttons */}
+      {/* use category data from the API all on '/categories' to render these buttons */}
       {categoryList.map((item) => (
         <ToggleButton value={item} type="submit">
           {item.toUpperCase()}

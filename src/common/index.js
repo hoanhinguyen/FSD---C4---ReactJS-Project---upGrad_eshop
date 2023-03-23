@@ -1,4 +1,4 @@
-export {default as Sorting} from './Sorting/Sorting';
+export {default as SortBy} from './SortBy/SortBy';
 export {default as Product} from './Product/Product';
 export {default as Categories} from './Categories/Categories';
 export {default as AddAddress} from './AddAddress/AddAddress';

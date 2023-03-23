@@ -38,6 +38,7 @@ const Product = (props) => {
   const handleDelete = () => {
     //delete method importing from the ComfirmDialog component below
     confirmDialog("Are you sure you want to delete the product?", async () => {
+      // API call to delete a product per id
       try {
         await axios.delete(`/products/${id}`, {
           headers: {
@@ -53,7 +54,7 @@ const Product = (props) => {
     });
   };
 
-  // if edit a product, navigate to the update product page with the pathname having product id
+  // if editing a product, navigate to the update product page with the pathname having product id
   const handleEdit = () => {
     navigate(`/update/${id}`, { state: { title: "Modify Product" } });
   };

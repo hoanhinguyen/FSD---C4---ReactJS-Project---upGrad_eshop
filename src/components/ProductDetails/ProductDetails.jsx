@@ -11,10 +11,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "./ProductDetails.css";
 import axios from "axios";
 
-const LoginAlert = (text) => {
-  toast.error(text, { toastId: "login-alert" });
-};
-
 const ProductDetail = () => {
   const [num, setNum] = useState(1);
   const [product, setProduct] = useState({});
@@ -28,6 +24,9 @@ const ProductDetail = () => {
   const { token } = useContext(AuthContext);
 
   useEffect(() => {
+    if (token.length === 0) {
+      navigate("/login");
+    }
     const fetchProduct = async () => {
       try {
         const res = await axios.get(`/products/${productId}`);
@@ -41,14 +40,9 @@ const ProductDetail = () => {
     fetchProduct();
   }, []);
 
-
+  // uppercase the 1st character of the category
   const transformedCategory = (val) => {
-
-    if (val === "personalcare") {
-      return "Personal Care";
-    } else {
-      return val.charAt(0).toUpperCase() + val.slice(1);
-    }
+    return val.charAt(0).toUpperCase() + val.slice(1);
   };
 
   const transformedTextCategory = transformedCategory(categoryText);
@@ -60,13 +54,9 @@ const ProductDetail = () => {
     });
   };
 
-  // checking if the user logged in to proceed the orders
+  // checking if the user logged in to proceed the order
   const handlePlaceOrder = () => {
-    if (token) {
-      navigateToCheckout();
-    } else {
-      LoginAlert("Please login to place orders");
-    }
+    navigateToCheckout();
   };
 
   // handling the quantity input
@@ -75,7 +65,6 @@ const ProductDetail = () => {
       setNum(e.target.value);
     }
   };
-
 
   return (
     <div className="productDetails">

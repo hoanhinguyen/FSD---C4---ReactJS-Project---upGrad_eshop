@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -12,7 +12,6 @@ import {
   Button,
 } from "@mui/material";
 
-
 import { AddAddress, ConfirmPaper } from "../../common";
 import "./Checkout.css";
 
@@ -24,20 +23,20 @@ import { AuthContext } from "../../context/authContext";
 
 const customId = "custom-id-yes";
 
-
 const steps = ["Items", "Select Address", "Confirm Order"];
 
+// this component is used for the first step of checkout
 const OrderInfo = ({ product, qtyC, calTotal, transformedTextCategory }) => {
   const totalPrice = Math.round(product.price * qtyC * 100) / 100;
   calTotal(totalPrice);
 
   return (
-    <Box sx={{ flexGrow: 1, mx: 20 }}>
+    <Box sx={{ mx: 20, my:0 }}>
       <Grid sx={{ flexGrow: 1 }} container className="details">
-        <Grid item xs={6} className="media">
+        <Grid item xs={4} className="media">
           <img src={product.imageUrl} alt={product.name} />
         </Grid>
-        <Grid item xs={6} className="description">
+        <Grid item xs={8} className="descriptionOrder">
           <Typography variant="h4" mb={1}>
             {product.name}
           </Typography>
@@ -49,7 +48,9 @@ const OrderInfo = ({ product, qtyC, calTotal, transformedTextCategory }) => {
             <Typography variant="subtitle1" gutterBottom>
               Categories: <b>{transformedTextCategory}</b>{" "}
             </Typography>
-            <Typography variant="body1" sx={{fontStyle: 'italic'}}>{product.description}</Typography>
+            <Typography variant="body1" sx={{ fontStyle: "italic" }}>
+              {product.description}
+            </Typography>
             <Typography variant="h5" color="secondary">
               Total Price: ${totalPrice}
             </Typography>
@@ -65,13 +66,21 @@ const Checkout = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const { product, num, transformedTextCategory } = location.state;
+ 
   const [selectItem, setSelectItem] = useState({});
   const { token, currentUser } = useContext(AuthContext);
 
-  const handleNext = () => {
+  // if the user did not login, they will be redirected to login page
+  useEffect(() => {
+    if(token.length === 0) {
+      navigate('/login')
+    }
+  }, []);
 
+  const { product, num, transformedTextCategory } = location.state;
+
+  // handling the next button
+  const handleNext = () => {
     // if there is no address selected at step 1, alert the user
     if (Object.keys(selectItem).length === 0 && activeStep === 1) {
       Alert();
@@ -80,10 +89,11 @@ const Checkout = () => {
     }
   };
 
+  // handling the go-back button
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    if (activeStep-1===1) {
-      setSelectItem("")
+    if (activeStep - 1 === 1) {
+      setSelectItem("");
     }
   };
 
@@ -116,8 +126,9 @@ const Checkout = () => {
 
   return (
     <>
-      <Box sx={{ width: "100%" }} className="checkout">
+      <Box sx={{ width: "100%", my:0 }} className="checkout">
         <ToastContainer autoClose={2000} theme="colored" />
+        <Box className="checkoutWrap">
         <Stepper activeStep={activeStep} className="steps">
           {steps.map((label, index) => {
             const stepProps = {};
@@ -192,6 +203,7 @@ const Checkout = () => {
             </Box>
           </React.Fragment>
         )}
+        </Box>
       </Box>
     </>
   );

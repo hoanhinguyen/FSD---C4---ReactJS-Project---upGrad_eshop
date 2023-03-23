@@ -72,7 +72,7 @@ const Login = () => {
       }
     }
     if (token) {
-      // checking if the user is an admin, then use admin token for getting user list
+      // checking if the user is an admin, then use the admin token for getting user list
       checkingAdminSignedIn(token);
       gettingUsersData(newAdminToken);
       getCurrentUser();

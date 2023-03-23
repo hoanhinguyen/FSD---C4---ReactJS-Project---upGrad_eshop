@@ -43,6 +43,7 @@ const AddressForm = ({ saveAddressFunc}) => {
     user: currentUser.id,
   });
 
+  // getting the addresses per user id
   const fetchAddress = async () => {
     try {
       const res = await axios.get(`/addresses`, {
@@ -61,6 +62,7 @@ const AddressForm = ({ saveAddressFunc}) => {
     }
   };
 
+  // this function is used to validate the input before address submission
   const fetchAndTestAddress = async () => {
     try {
       const res = await axios.get(`/addresses`, {
@@ -74,14 +76,16 @@ const AddressForm = ({ saveAddressFunc}) => {
         return false;
       }
 
+      // if the contact number is not empty, checking this contact number whether it is duplicated
       if (input.contactNumber !== "") {
         if (res.data.find((add) => add.contactNumber === input.contactNumber)) {
           setMessage("This is a duplicated contact number! Try a new one");
           return false;
         }
+        // after 3s, the error message disappears
         setTimeout(() => {
           setMessage("");
-        }, 3000);
+        }, 6000);
 
         return true;
       }
@@ -90,11 +94,12 @@ const AddressForm = ({ saveAddressFunc}) => {
     }
   };
 
+  // getting the addresses by use id when this component is rendered
   useEffect(() => {
     fetchAddress();
   }, []);
 
-  // THIS WILL POST AN ADDRESS IN THE DATABASE, THEN SAVE THEM IN THE ADDRESS
+  // this function will post the validated address input to the database
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -109,13 +114,14 @@ const AddressForm = ({ saveAddressFunc}) => {
           },
         });
 
+        // after 10s, the successful message disappears
         setTimeout(() => {
           setMessage("");
         }, 10000);
 
         setMessage("Your Address has been saved");
       } catch (err) {
-        console.log(err.response);
+        console.log(err);
       }
       fetchAddress();
     }
@@ -124,6 +130,7 @@ const AddressForm = ({ saveAddressFunc}) => {
   };
 
   const handleChange = (e) => {
+    // if recieving contact number or zip code input, convert them to string type
     if (e.target.value === "contactNumber" || e.target.value === "zipcode") {
       setInput((prev) => ({ ...prev, [e.target.name]: e.target.value + "" }));
     } else {
@@ -134,14 +141,15 @@ const AddressForm = ({ saveAddressFunc}) => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Container component="main" maxWidth="xs">
+        <Container sx={{ flexGrow: 1 }} component="main" maxWidth="xs">
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 8,
+              marginTop: 3,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+             
             }}
           >
             <Typography component="h1" variant="h5">
@@ -154,7 +162,6 @@ const AddressForm = ({ saveAddressFunc}) => {
                 margin="normal"
                 required
                 fullWidth
-                // id="name"
                 label="Name"
                 name="name"
                 autoComplete="name"
@@ -169,7 +176,6 @@ const AddressForm = ({ saveAddressFunc}) => {
                 name="contactNumber"
                 label="Contact Number"
                 type="number"
-                // id="contactNumber"
                 autoComplete="lastname"
                 onChange={handleChange}
               />
@@ -181,7 +187,6 @@ const AddressForm = ({ saveAddressFunc}) => {
                 name="email"
                 label="Email address"
                 type="email"
-                // id="email"
                 autoComplete="email"
                 onChange={handleChange}
               />
@@ -193,7 +198,6 @@ const AddressForm = ({ saveAddressFunc}) => {
                 name="street"
                 label="Street"
                 type="street"
-                // id="street"
                 autoComplete="street"
                 onChange={handleChange}
               />
@@ -205,7 +209,6 @@ const AddressForm = ({ saveAddressFunc}) => {
                 name="city"
                 label="City"
                 type="city"
-                // id="city"
                 autoComplete="city"
                 onChange={handleChange}
               />
@@ -217,7 +220,6 @@ const AddressForm = ({ saveAddressFunc}) => {
                 name="state"
                 label="State"
                 type="state"
-                // id="state"
                 autoComplete="state"
                 onChange={handleChange}
               />
@@ -228,7 +230,6 @@ const AddressForm = ({ saveAddressFunc}) => {
                 name="landmark"
                 label="Landmark"
                 type="landmark"
-                // id="landmark"
                 autoComplete="landmark"
                 onChange={handleChange}
               />
@@ -240,7 +241,6 @@ const AddressForm = ({ saveAddressFunc}) => {
                 name="zipcode"
                 label="Zip Code"
                 type="number"
-                // id="zip"
                 autoComplete="zipcode"
                 onChange={handleChange}
               />
@@ -250,7 +250,6 @@ const AddressForm = ({ saveAddressFunc}) => {
                 </Typography>
               )}
 
-              {/* handle this button to submit the info */}
               <Button
                 type="submit"
                 fullWidth
