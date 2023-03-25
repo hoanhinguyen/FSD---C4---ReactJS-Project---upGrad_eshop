@@ -90,8 +90,8 @@ const Login = () => {
       await login(input);
       return true;
     } catch (e) {
-      console.log(e);
       return false;
+      console.log(e);
     }
   };
 
@@ -102,7 +102,7 @@ const Login = () => {
     localStorage.setItem("username", JSON.stringify(input.username));
     
     // store the result of the login process
-    const checkingLogin = await loginProcess();
+    const checkingLogin = loginProcess();
 
     // if there is any error, something wrong and alert the user
     if (token === "" && checkingLogin !== true) {
