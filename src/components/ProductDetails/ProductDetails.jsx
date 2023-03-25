@@ -6,7 +6,7 @@ import { Grid, Box, Typography, Chip, TextField, Button } from "@mui/material";
 
 import { AuthContext } from "../../context/authContext";
 
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 import "./ProductDetails.css";
 import axios from "axios";

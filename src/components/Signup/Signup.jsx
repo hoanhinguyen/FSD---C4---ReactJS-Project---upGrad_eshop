@@ -26,7 +26,7 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <a color="inherit" href="https://www.upgrad.com/vn/" target="_blank">
+      <a color="inherit" href="https://www.upgrad.com/vn/" target="_blank" rel="noreferrer">
         upGrad
       </a>{" "}
       {2021}
