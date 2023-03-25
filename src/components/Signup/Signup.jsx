@@ -38,7 +38,7 @@ function Copyright(props) {
 const Signup = () => {
   const [input, setInput] = useState({
     email: "",
-    role: ["user"],
+    role: ["admin"],
     password: "",
     firstName: "",
     lastName: "",
