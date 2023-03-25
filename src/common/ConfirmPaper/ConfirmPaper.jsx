@@ -36,7 +36,7 @@ const Confirm = ({ product, totalPrice, selectItem, qtyC, transformedTextCategor
               </Typography>
               <Typography variant="body1">{product.description}</Typography>
               <Typography variant="h5" color="secondary">
-                Total Price: ${totalPrice}
+                Total Price: <span>&#x20B9;</span> {totalPrice}
               </Typography>
             </div>
           </Typography>

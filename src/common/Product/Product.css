@@ -6,7 +6,17 @@
 .cardContent {
     display: flex;
     justify-content: space-between;
-    gap:18px
+    /* gap: 16px; */
+}
+
+.price {
+    width: 40%;
+    text-align: right;
+}
+
+.productName {
+    width: 60%;
+    text-align: left;
 }
 
 .CTA {

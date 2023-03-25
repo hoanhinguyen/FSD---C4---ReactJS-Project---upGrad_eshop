@@ -70,11 +70,11 @@ const Product = (props) => {
       />
       <CardContent >
         <div className="cardContent">
-          <Typography gutterBottom variant="h6" component="div">
+          <Typography className="productName" gutterBottom variant="h6" component="div">
             {name}
           </Typography>
-          <Typography gutterBottom variant="h6" component="div">
-            ${price}
+          <Typography className="price" gutterBottom variant="h6" component="div">
+          <span>&#x20B9;</span> {price}
           </Typography>
         </div>
         <Typography variant="body2" color="text.secondary">

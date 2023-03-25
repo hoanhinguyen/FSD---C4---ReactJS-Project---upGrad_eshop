@@ -98,7 +98,7 @@ const ProductDetail = () => {
               </Typography>
               <Typography variant="body1">{product.description}</Typography>
               <Typography variant="h4" color="secondary">
-                ${product.price}
+              <span>&#x20B9;</span> {product.price}
               </Typography>
             </div>
 
