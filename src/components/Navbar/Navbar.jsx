@@ -13,7 +13,7 @@ import "./Navbar.css";
 
 const Navbar = () => {
 
-  const { logout, currentUser } = useContext(AuthContext);
+  const { logout, currentUser, token } = useContext(AuthContext);
 
   let currentRole;
 
@@ -50,7 +50,7 @@ const Navbar = () => {
           </div>
 
           {/* after authentication and authorization, use this section */}
-          {currentRole ? (
+          {token ? (
             <>
               <SearchProduct className="search" />
               <div className="buttons">

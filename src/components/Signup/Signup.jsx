@@ -38,7 +38,7 @@ function Copyright(props) {
 const Signup = () => {
   const [input, setInput] = useState({
     email: "",
-    role: ["admin"],
+    role: ["user"],
     password: "",
     firstName: "",
     lastName: "",
@@ -127,7 +127,8 @@ const Signup = () => {
     if (validation === false) {
       try {
         // sign up for the application
-        await axios.post("/auth/signup", input);
+        const res = await axios.post("/auth/signup", input);
+        console.log(res)
         //updating the user list with the new added user for login process
         gettingUsersData(newAdminToken);
         navigate("/login");

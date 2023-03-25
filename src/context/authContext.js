@@ -87,6 +87,7 @@ export const AuthContextProvider = ({ children }) => {
   const login = async (inputs) => {
     try {
       const res = await axios.post("/auth/signin", inputs); ///login
+      console.log(res);
       setToken(res.data.token);
       localStorage.setItem("access-token", JSON.stringify(res.data.token));
       // checking if it is an admin user
