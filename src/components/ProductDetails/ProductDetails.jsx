@@ -27,6 +27,8 @@ const ProductDetail = () => {
     if (token.length === 0) {
       navigate("/login");
     }
+
+    // getting the product per product id through api call
     const fetchProduct = async () => {
       try {
         const res = await axios.get(`/products/${productId}`);
@@ -54,7 +56,7 @@ const ProductDetail = () => {
     });
   };
 
-  // checking if the user logged in to proceed the order
+  // navigate to the checkout page after placing an order
   const handlePlaceOrder = () => {
     navigateToCheckout();
   };
@@ -98,7 +100,7 @@ const ProductDetail = () => {
               </Typography>
               <Typography variant="body1">{product.description}</Typography>
               <Typography variant="h4" color="secondary">
-              <span>&#x20B9;</span> {product.price}
+                <span>&#x20B9;</span> {product.price}
               </Typography>
             </div>
 

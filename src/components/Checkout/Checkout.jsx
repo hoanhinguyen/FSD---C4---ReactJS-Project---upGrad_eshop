@@ -93,7 +93,7 @@ const Checkout = () => {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
     if (activeStep - 1 === 1) {
-      setSelectItem("");
+      setSelectItem({});
     }
   };
 

@@ -24,7 +24,7 @@ const Product = (props) => {
   const { id, name, price, description, imageUrl } = product;
   const navigate = useNavigate();
 
-  const {token, currentUser } = useContext(AuthContext);
+  const { token, currentUser } = useContext(AuthContext);
 
   let currentRole;
 
@@ -64,17 +64,27 @@ const Product = (props) => {
       <CardMedia
         sx={{ height: 200 }}
         image={imageUrl}
-        title="green iguana"
+        title={name}
         alt={name}
         key={id}
       />
-      <CardContent >
+      <CardContent>
         <div className="cardContent">
-          <Typography className="productName" gutterBottom variant="h6" component="div">
+          <Typography
+            className="productName"
+            gutterBottom
+            variant="h6"
+            component="div"
+          >
             {name}
           </Typography>
-          <Typography className="price" gutterBottom variant="h6" component="div">
-          <span>&#x20B9;</span> {price}
+          <Typography
+            className="price"
+            gutterBottom
+            variant="h6"
+            component="div"
+          >
+            <span>&#x20B9;</span> {price}
           </Typography>
         </div>
         <Typography variant="body2" color="text.secondary">

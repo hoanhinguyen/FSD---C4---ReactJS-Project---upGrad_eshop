@@ -26,7 +26,7 @@ const theme = createTheme({
   },
 });
 
-const AddressForm = ({ saveAddressFunc}) => {
+const AddressForm = ({ saveAddressFunc }) => {
   const { token, currentUser } = useContext(AuthContext);
 
   const [message, setMessage] = useState("");
@@ -94,7 +94,7 @@ const AddressForm = ({ saveAddressFunc}) => {
     }
   };
 
-  // getting the addresses by use id when this component is rendered
+  // getting the addresses by user id when this component is rendered
   useEffect(() => {
     fetchAddress();
   }, []);
@@ -119,7 +119,7 @@ const AddressForm = ({ saveAddressFunc}) => {
           setMessage("");
         }, 10000);
 
-        setMessage("Your Address has been saved");
+        setMessage("Your address has been saved");
       } catch (err) {
         console.log(err);
       }
@@ -149,7 +149,6 @@ const AddressForm = ({ saveAddressFunc}) => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-             
             }}
           >
             <Typography component="h1" variant="h5">

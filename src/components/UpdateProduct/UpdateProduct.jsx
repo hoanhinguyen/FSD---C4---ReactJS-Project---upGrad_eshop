@@ -107,7 +107,7 @@ const UpdateProduct = () => {
   );
 
   const handleChange = (e) => {
-    // if the received event from the selecting option is new value, use this input
+    // if the received event from the selecting option is new value, use this input setting
     if (e.__isNew__) {
       setInput((prev) => ({ ...prev, [categoryOptions[0].name]: e.value }));
     } else if (e.name) {
@@ -158,7 +158,7 @@ const UpdateProduct = () => {
         state: { message: `Product ${input.name} modified successfully` },
       });
     } else {
-      // if  there is no product id, we use post request in the api call to add a new product
+      // if there is no product id, we use post request in the api call to add a new product
       try {
         await axios.post(`/products`, input, {
           headers: {

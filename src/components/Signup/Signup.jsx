@@ -26,7 +26,12 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <a color="inherit" href="https://www.upgrad.com/vn/" target="_blank" rel="noreferrer">
+      <a
+        color="inherit"
+        href="https://www.upgrad.com/vn/"
+        target="_blank"
+        rel="noreferrer"
+      >
         upGrad
       </a>{" "}
       {2021}
@@ -60,11 +65,11 @@ const Signup = () => {
     }
   };
 
-  useEffect(()=> {
+  useEffect(() => {
     if (token) {
-      navigate('/')
+      navigate("/");
     }
-  },[])
+  }, []);
   // This function is used to validate password input
   const validating = (password) => {
     if (confirmPass.length < 6) {
@@ -92,7 +97,6 @@ const Signup = () => {
     e.preventDefault();
 
     let userList;
-
 
     // in the case of user login, use admin token to get user database
     if (newAdminToken) {
@@ -123,12 +127,17 @@ const Signup = () => {
       return;
     }
 
+    if (Object.values(input).filter((val) => val === "").length !== 0) {
+      setError("All fields must not be empty");
+      return;
+    }
+
     // checking if the password is valid or not before the API call
     if (validation === false) {
       try {
         // sign up for the application
         const res = await axios.post("/auth/signup", input);
-        console.log(res)
+        console.log(res);
         //updating the user list with the new added user for login process
         gettingUsersData(newAdminToken);
         navigate("/login");

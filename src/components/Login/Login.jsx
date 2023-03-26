@@ -28,7 +28,12 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <a color="inherit" href="https://www.upgrad.com/vn/" target="_blank" rel="noreferrer">
+      <a
+        color="inherit"
+        href="https://www.upgrad.com/vn/"
+        target="_blank"
+        rel="noreferrer"
+      >
         upGrad
       </a>{" "}
       {"."}
@@ -42,7 +47,6 @@ const LoginAlert = (text) => {
 };
 
 const Login = () => {
-
   const [input, setInput] = useState({
     username: "",
     password: "",
@@ -50,12 +54,18 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const { login, setUsername, getUsersContext, getCurrentUser, token,checkingAdmin, newAdminToken} =
-    useContext(AuthContext); 
+  const {
+    login,
+    setUsername,
+    getUsersContext,
+    getCurrentUser,
+    token,
+    checkingAdmin,
+    newAdminToken,
+  } = useContext(AuthContext);
 
   // whenever the token changed from empty to having some value, get the users data and current user data for login and authorization
   useEffect(() => {
-
     const gettingUsersData = async () => {
       try {
         await getUsersContext();
@@ -64,13 +74,13 @@ const Login = () => {
       }
     };
 
-    const checkingAdminSignedIn = async (token)=> {
+    const checkingAdminSignedIn = async (token) => {
       try {
         await checkingAdmin(token);
       } catch (e) {
         console.log(e);
       }
-    }
+    };
     if (token) {
       // checking if the user is an admin, then use the admin token for getting user list
       checkingAdminSignedIn(token);
@@ -90,8 +100,8 @@ const Login = () => {
       await login(input);
       return true;
     } catch (e) {
-      return false;
       console.log(e);
+      return false;
     }
   };
 
@@ -100,7 +110,7 @@ const Login = () => {
     // set and save username for checking the current user for login
     setUsername(input.username);
     localStorage.setItem("username", JSON.stringify(input.username));
-    
+
     // store the result of the login process
     const checkingLogin = loginProcess();
 

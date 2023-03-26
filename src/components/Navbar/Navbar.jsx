@@ -12,7 +12,6 @@ import { AuthContext } from "../../context/authContext.js";
 import "./Navbar.css";
 
 const Navbar = () => {
-
   const { logout, currentUser, token } = useContext(AuthContext);
 
   let currentRole;

@@ -37,13 +37,12 @@ export const AuthContextProvider = ({ children }) => {
 
   //getting user list with admin token input
   const getUsersContext = async (tokenInput) => {
-    let adminToken;
 
     try {
       const res = await axios.get(`/users`, {
         headers: {
           accept: "application/json",
-          Authorization: `Bearer ${newAdminToken || tokenInput || adminToken}`,
+          Authorization: `Bearer ${newAdminToken || tokenInput}`,
         },
       });
 
